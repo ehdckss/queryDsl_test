@@ -31,7 +31,7 @@ class AuthorServiceTest {
     @BeforeEach
     public void initData(){
         List<Author> all = new ArrayList<>();
-        for(long i=1;i<=10;i++){
+        for(long i=1;i<=15;i++){
             all.add(new Author("이름" + String.valueOf(i)));
         }
         authorService.saveAuthor(all);
@@ -67,6 +67,29 @@ class AuthorServiceTest {
             throw new RuntimeException(e);
         }
 
+    }
+
+
+
+    @Test
+    public void updateAuthorNameById() {
+        //
+        long result = authorService.updateAuthorNameById(1l, "조동찬");
+
+        log.info("result : [{}]", result);
+
+        AuthorResponse authorResponse = authorService.selectAuthorByid(1l);
+        assertEquals(authorResponse.getName(),"조동찬");
+
+
+    }
+
+    @Test
+    public void dleteAllAuthor(){
+        authorRepository.dleteAllAuthor();
+
+        List<AuthorResponse> authorResponses = authorService.selectAllAuthor();
+        assertEquals(authorResponses.size(), 0);
     }
 
 

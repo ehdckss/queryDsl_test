@@ -25,6 +25,8 @@ public class AuthorRepositoryQDslImpl implements AuthorRepositoryQDsl{
         this.queryFactory = new JPAQueryFactory(em);
     }
 
+    //read
+
     public List<AuthorResponse> selectAllAuthor(){
         return queryFactory
                 .select(
@@ -85,6 +87,27 @@ public class AuthorRepositoryQDslImpl implements AuthorRepositoryQDsl{
                 .from(author)
                 .leftJoin(book).on(author.id.eq(book.id))
                 .fetchOne();
+    }
+
+
+
+    //update
+    public long updateAuthorNameById(Long id, String newName) {
+        // 특정 id를 가진 Author의 이름을 업데이트하는 예시
+        return queryFactory
+                .update(author)  // 업데이트 대상 엔티티 지정
+                .set(author.name, newName)  // 수정할 필드 설정
+                .where(idEq(id))  // 조건: id가 일치하는 경우
+                .execute();  // 쿼리 실행
+    }
+
+    //delete
+    public long deleteAuthorsByCondition(Long id) {
+        // 동적 조건을 기반으로 Author 엔티티를 삭제하는 예시
+        return queryFactory
+                .delete(author)  // 삭제 대상 엔티티 지정
+                .where(idEq(id))
+                .execute();  // 쿼리 실행
     }
 
 

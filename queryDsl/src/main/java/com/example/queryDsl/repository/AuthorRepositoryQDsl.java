@@ -15,4 +15,9 @@ public interface AuthorRepositoryQDsl {
     public AuthorAndBookResponse selectAuthorAndBookById(Long id);
 
     public CompletableFuture<AuthorPageResponse> selectAuthorsWithPaging(int page, int size);
+
+    public long updateAuthorNameById(Long id, String newName);
+
+    public long deleteAuthorsByCondition(Long id);
+
 }
