@@ -1,0 +1,14 @@
+spring:
+  datasource:
+#    url: jdbc:mysql://localhost:3306/mysql?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+    url: jdbc:mysql://localhost:3306/mysql?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useLegacyDatetimeCode=false
+    username: mnwise
+    password: mnwise4210!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create #create-drop  # ? ??? ?? ??? ????, ?? ????? 'validate' ?? 'none'?? ??
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MySQLDialect
