@@ -1,6 +1,7 @@
 package com.example.queryDsl.service;
 
 import com.example.queryDsl.entity.Author;
+import com.example.queryDsl.entity.Book;
 import com.example.queryDsl.entity.response.AuthorPageResponse;
 import com.example.queryDsl.entity.response.AuthorResponse;
 import com.example.queryDsl.repository.AuthorRepository;
@@ -31,8 +32,11 @@ class AuthorServiceTest {
     @BeforeEach
     public void initData(){
         List<Author> all = new ArrayList<>();
+        List<Book> books = new ArrayList<>();
         for(long i=1;i<=15;i++){
-            all.add(new Author("이름" + String.valueOf(i)));
+            Author author = new Author("이름" + String.valueOf(i));
+            all.add(author);
+            books.add(new Book("책이름" + String.valueOf(i) , author));
         }
         authorService.saveAuthor(all);
     }
@@ -45,8 +49,8 @@ class AuthorServiceTest {
 
     @Test
     public void selectAuthorByid() {
-        AuthorResponse findAuthor = authorService.selectAuthorByid(2L);
-        assertEquals("이름2", findAuthor.getName());
+        AuthorResponse findAuthor = authorService.selectAuthorByid(3L);
+        assertEquals("홍길동", findAuthor.getName());
     }
 
 

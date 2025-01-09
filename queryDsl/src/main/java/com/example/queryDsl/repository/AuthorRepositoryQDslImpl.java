@@ -4,7 +4,7 @@ import com.example.queryDsl.entity.response.AuthorAndBookResponse;
 import com.example.queryDsl.entity.response.AuthorPageResponse;
 import com.example.queryDsl.entity.response.AuthorResponse;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
@@ -24,8 +24,6 @@ public class AuthorRepositoryQDslImpl implements AuthorRepositoryQDsl{
     public AuthorRepositoryQDslImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
-
-    //read
 
     public List<AuthorResponse> selectAllAuthor(){
         return queryFactory
@@ -69,14 +67,35 @@ public class AuthorRepositoryQDslImpl implements AuthorRepositoryQDsl{
     }
 
 
-    public AuthorResponse selectAuthorByid(Long id){
+    public AuthorResponse selectAuthorByid2(Long id){
+        StringTemplate nameTemplate = Expressions.stringTemplate(
+                "CASE WHEN {0} = '이름3' THEN '홍길동' WHEN {0} = '이름4' THEN '김땡땡' ELSE {0} END",
+                author.name
+        );
+
         return queryFactory
                 .select(
-                        Projections.fields(AuthorResponse.class, author.id, author.name)
+                        Projections.fields(AuthorResponse.class, author.id, nameTemplate.as("name"))
                 )
                 .from(author)
                 .where(idEq(id))
                 .fetchOne();
+
+    }
+    public AuthorResponse selectAuthorByid(Long id){
+        StringExpression caseByName = new CaseBuilder()
+                .when(author.name.eq("이름3")).then("홍길동")
+                .when(author.name.eq("이름4")).then("유재석")
+                .otherwise("이름들");
+
+        return queryFactory
+                .select(
+                        Projections.fields(AuthorResponse.class, author.id, caseByName.as("name"))
+                )
+                .from(author)
+                .where(idEq(id))
+                .fetchOne();
+
     }
 
     public AuthorAndBookResponse selectAuthorAndBookById(Long id){
@@ -88,29 +107,19 @@ public class AuthorRepositoryQDslImpl implements AuthorRepositoryQDsl{
                 .leftJoin(book).on(author.id.eq(book.id))
                 .fetchOne();
     }
-
-
-
-    //update
     public long updateAuthorNameById(Long id, String newName) {
-        // 특정 id를 가진 Author의 이름을 업데이트하는 예시
         return queryFactory
-                .update(author)  // 업데이트 대상 엔티티 지정
-                .set(author.name, newName)  // 수정할 필드 설정
-                .where(idEq(id))  // 조건: id가 일치하는 경우
-                .execute();  // 쿼리 실행
-    }
-
-    //delete
-    public long deleteAuthorsByCondition(Long id) {
-        // 동적 조건을 기반으로 Author 엔티티를 삭제하는 예시
-        return queryFactory
-                .delete(author)  // 삭제 대상 엔티티 지정
+                .update(author)
+                .set(author.name, newName)
                 .where(idEq(id))
-                .execute();  // 쿼리 실행
+                .execute();
     }
-
-
+    public long deleteAuthorsByCondition(Long id) {
+        return queryFactory
+                .delete(author)
+                .where(idEq(id))
+                .execute();
+    }
     private BooleanExpression idEq(Long id){
         return id != null ? author.id.eq(id) : null;
     }
